@@ -3,15 +3,20 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { CoordinateItem } from '../interfaces';
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 
 declare const L: any;
 
 @Component
 export default class MapViewerComponent extends Vue {
 
+  private map: any;
   private marker: any;
   private token: string = 'pk.eyJ1IjoiYW5kcnUyNTUiLCJhIjoiY2pwdzR0ZGRiMHlvOTQ4bnR2OG9lbTNhNSJ9.isi3uGKrTkISJMlnS2T1bw';
+
+  @Prop() private position!: CoordinateItem;
+  @Prop() private isMarkerDraggable: boolean =  true;
 
   public beforeMount() {
     const styleElement = document.createElement('link');
@@ -22,17 +27,32 @@ export default class MapViewerComponent extends Vue {
 
   public mounted() {
     this.loadMapboxLib().then(() => {
-      const defaultCoord = [40, -74.50];
+      const coord = [this.position.latitude, this.position.longitude];
       L.mapbox.accessToken = this.token;
-      const map = L.mapbox.map('map', 'mapbox.streets');
-      this.marker = new L.marker( new L.LatLng(defaultCoord[0], defaultCoord[1]), {
-        draggable: true,
+      this.map = L.mapbox.map('map', 'mapbox.streets');
+      this.marker = new L.marker( new L.LatLng(this.position.latitude, this.position.longitude), {
+        draggable: this.isMarkerDraggable,
       });
-      map.setView(defaultCoord, 9);
-      this.marker.setLatLng(defaultCoord).addTo(map);
+      this.map.setView(coord, 9);
+      this.marker.setLatLng(coord).addTo(this.map);
       this.marker.on('dragend', this.onDragEndMarker);
       this.$emit('onMainMarkerGetLocation', this.marker);
     });
+  }
+
+  @Watch('position')
+  public onChangePosition() {
+    const coord = [this.position.latitude, this.position.longitude];
+    this.map.setView(coord, 9);
+    this.marker.setLatLng(coord);
+  }
+
+  @Watch('isMarkerDraggable')
+  public onChangeDraggableMode() {
+    this.marker.dragging.disable();
+    if ( this.isMarkerDraggable ) {
+      this.marker.dragging.enable();
+    }
   }
 
   private onDragEndMarker() {

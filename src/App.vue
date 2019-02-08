@@ -2,17 +2,23 @@
   <div id="app">
     <header>
       <Form>
-        <CoordinateViewer v-bind:latitude=latitude v-bind:longitude=longitude />
-        <PositionSwitcher/>
+        <CoordinateViewer v-bind:position=position 
+            v-bind:isReadonly=isReadonly
+            @onChangeCoord=onChangeCoord
+            @onReset=onReset />
+        <PositionSwitcher @onChangeMode=onChangeMode />
       </Form>
     </header>
     <main>
-      <MapViewer @onMainMarkerGetLocation=checkMarkerPosition />
+      <MapViewer v-bind:position=position 
+          v-bind:isMarkerDraggable=isMarkerDraggable
+          @onMainMarkerGetLocation=checkMarkerPosition />
     </main>
   </div>
 </template>
 
 <script lang="ts">
+import { CoordinateItem } from './interfaces';
 import { Component, Vue } from 'vue-property-decorator';
 import MapViewer from './components/MapViewer.vue';
 import CoordinateViewer from './components/CoordinateViewer.vue';
@@ -27,22 +33,46 @@ import PositionSwitcher from './components/PositionSwitcher.vue';
 })
 export default class App extends Vue {
 
-  private latitude!: string;
-  private longitude!: string;
+  private readonly defaultPosition: CoordinateItem = {
+    latitude: 40,
+    longitude: -74.5,
+  };
+  private position: CoordinateItem = this.defaultPosition;
+  private isMarkerDraggable: boolean = true;
+  private isReadonly: boolean = true;
 
   public data(): any {
     return {
-      latitude: '',
-      longitude: '',
+      isMarkerDraggable: true,
+      isReadonly: true,
     };
   }
 
   public checkMarkerPosition(marker: any) {
       const position = marker.getLatLng();
-      this.latitude = position.lat;
-      this.longitude = position.lng;
+      this.position = {
+        latitude: position.lat,
+        longitude: position.lng,
+      };
   }
 
+  public onChangeMode(mode: string) {
+    this.isMarkerDraggable = true;
+    this.isReadonly = true;
+
+    if (mode === 'changeByText') {
+      this.isMarkerDraggable = false;
+      this.isReadonly = false;
+    }
+  }
+
+  public onChangeCoord(position: CoordinateItem) {
+    this.position = position;
+  }
+
+  public onReset() {
+    this.position = this.defaultPosition;
+  }
 }
 </script>
 
