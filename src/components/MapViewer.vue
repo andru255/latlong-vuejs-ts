@@ -16,6 +16,7 @@ export default class MapViewerComponent extends Vue {
   private token: string = 'pk.eyJ1IjoiYW5kcnUyNTUiLCJhIjoiY2pwdzR0ZGRiMHlvOTQ4bnR2OG9lbTNhNSJ9.isi3uGKrTkISJMlnS2T1bw';
 
   @Prop() private position!: CoordinateItem;
+  @Prop() private zoom!: number;
   @Prop() private isMarkerDraggable: boolean =  true;
 
   public beforeMount() {
@@ -33,9 +34,10 @@ export default class MapViewerComponent extends Vue {
       this.marker = new L.marker( new L.LatLng(this.position.latitude, this.position.longitude), {
         draggable: this.isMarkerDraggable,
       });
-      this.map.setView(coord, 9);
+      this.map.setView(coord, this.zoom);
       this.marker.setLatLng(coord).addTo(this.map);
       this.marker.on('dragend', this.onDragEndMarker);
+      this.map.on('zoomend', this.onZoomEndMap);
       this.$emit('onMainMarkerGetLocation', this.marker);
     });
   }
@@ -43,7 +45,7 @@ export default class MapViewerComponent extends Vue {
   @Watch('position')
   public onChangePosition() {
     const coord = [this.position.latitude, this.position.longitude];
-    this.map.setView(coord, 9);
+    this.map.setView(coord, this.zoom);
     this.marker.setLatLng(coord);
   }
 
@@ -58,6 +60,11 @@ export default class MapViewerComponent extends Vue {
   private onDragEndMarker() {
     this.$emit('onMainMarkerGetLocation', this.marker);
   }
+
+  private onZoomEndMap() {
+    this.$emit('onZoomendMap', this.map.getZoom());
+  }
+
 
   private loadMapboxLib(): Promise<() => void> {
     return new Promise((resolve, reject) => {

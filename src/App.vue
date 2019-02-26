@@ -6,13 +6,16 @@
             v-bind:isReadonly=isReadonly
             @onChangeCoord=onChangeCoord
             @onReset=onReset />
-        <PositionSwitcher @onChangeMode=onChangeMode />
+        <PositionSwitcher @onChangeMode=onChangeMode 
+            @onGetPositionByBrowser=onGetPositionByBrowser />
       </Form>
     </header>
     <main>
       <MapViewer v-bind:position=position 
+          v-bind:zoom=zoom
           v-bind:isMarkerDraggable=isMarkerDraggable
-          @onMainMarkerGetLocation=checkMarkerPosition />
+          @onMainMarkerGetLocation=checkMarkerPosition 
+          @onZoomEndMap=onZoomEndMap />
     </main>
   </div>
 </template>
@@ -38,6 +41,7 @@ export default class App extends Vue {
     longitude: -74.5,
   };
   private position: CoordinateItem = this.defaultPosition;
+  private zoom: number = 9;
   private isMarkerDraggable: boolean = true;
   private isReadonly: boolean = true;
 
@@ -49,11 +53,15 @@ export default class App extends Vue {
   }
 
   public checkMarkerPosition(marker: any) {
-      const position = marker.getLatLng();
-      this.position = {
-        latitude: position.lat,
-        longitude: position.lng,
-      };
+    const position = marker.getLatLng();
+    this.position = {
+      latitude: position.lat,
+      longitude: position.lng,
+    };
+  }
+
+  public onZoomEndMap(currentZoom: number) {
+    this.zoom = currentZoom;
   }
 
   public onChangeMode(mode: string) {
@@ -66,12 +74,21 @@ export default class App extends Vue {
     }
   }
 
+  public onGetPositionByBrowser(coordinate: CoordinateItem) {
+    if (typeof coordinate !== 'undefined') {
+      this.position = coordinate;
+      return;
+    }
+    console.log('Please enable your geolocation feature');
+  }
+
   public onChangeCoord(position: CoordinateItem) {
     this.position = position;
   }
 
   public onReset() {
     this.position = this.defaultPosition;
+    this.zoom = 9;
   }
 }
 </script>
