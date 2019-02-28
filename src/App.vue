@@ -8,6 +8,7 @@
             @onReset=onReset />
         <PositionSwitcher @onChangeMode=onChangeMode 
             @onGetPositionByBrowser=onGetPositionByBrowser />
+        <MessageCenter v-bind:message=message />
       </Form>
     </header>
     <main>
@@ -21,17 +22,19 @@
 </template>
 
 <script lang="ts">
-import { CoordinateItem } from './interfaces';
+import { CoordinateItem, Message } from './interfaces';
 import { Component, Vue } from 'vue-property-decorator';
 import MapViewer from './components/MapViewer.vue';
 import CoordinateViewer from './components/CoordinateViewer.vue';
 import PositionSwitcher from './components/PositionSwitcher.vue';
+import MessageCenter from './components/MessageCenter.vue';
 
 @Component({
   components: {
     MapViewer,
     CoordinateViewer,
     PositionSwitcher,
+    MessageCenter,
   },
 })
 export default class App extends Vue {
@@ -40,16 +43,18 @@ export default class App extends Vue {
     latitude: 40,
     longitude: -74.5,
   };
-  private position: CoordinateItem = this.defaultPosition;
   private readonly defaultZoom: number = 9;
+  private position: CoordinateItem = this.defaultPosition;
   private zoom: number = this.defaultZoom;
   private isMarkerDraggable: boolean = true;
   private isReadonly: boolean = true;
+  private message!: Message;
 
   public data(): any {
     return {
       isMarkerDraggable: true,
       isReadonly: true,
+      message: undefined,
     };
   }
 
@@ -80,7 +85,12 @@ export default class App extends Vue {
       this.position = coordinate;
       return;
     }
-    console.log('Please enable your geolocation feature');
+    const message: Message = {
+      id: Math.random(),
+      content: 'Please enable your geolocation feature',
+      timeout: 2000,
+    };
+    this.message = message;
   }
 
   public onChangeCoord(position: CoordinateItem) {
