@@ -62,7 +62,7 @@ export default class MapViewerComponent extends Vue {
   }
 
   private onZoomEndMap() {
-    this.$emit('onZoomendMap', this.map.getZoom());
+    this.$emit('onZoomEndMap', this.map.getZoom());
   }
 
 

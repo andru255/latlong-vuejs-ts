@@ -41,7 +41,8 @@ export default class App extends Vue {
     longitude: -74.5,
   };
   private position: CoordinateItem = this.defaultPosition;
-  private zoom: number = 9;
+  private readonly defaultZoom: number = 9;
+  private zoom: number = this.defaultZoom;
   private isMarkerDraggable: boolean = true;
   private isReadonly: boolean = true;
 
@@ -88,7 +89,7 @@ export default class App extends Vue {
 
   public onReset() {
     this.position = this.defaultPosition;
-    this.zoom = 9;
+    this.zoom = this.defaultZoom;
   }
 }
 </script>

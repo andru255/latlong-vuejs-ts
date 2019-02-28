@@ -21,23 +21,25 @@ export default class CoordinateViewerComponent extends Vue {
     private internalPosition: CoordinateItem = this.position;
 
     public onChangeLatitude(event: any) {
-        if ( this.isReadonly === false ) {
-            this.internalPosition = {
-                latitude: event.target.value,
-                longitude: this.internalPosition.longitude,
-            };
-            this.$emit('onChangeCoord', this.internalPosition);
+        if ( this.isReadonly === true ) {
+            return false;
         }
+        this.internalPosition = {
+            latitude: event.target.value,
+            longitude: this.position.longitude,
+        };
+        this.$emit('onChangeCoord', this.internalPosition);
     }
 
     public onChangeLongitude(event: any) {
-        if ( this.isReadonly === false ) {
-            this.internalPosition = {
-                latitude: this.internalPosition.latitude,
-                longitude: event.target.value,
-            };
-            this.$emit('onChangeCoord', this.internalPosition);
+        if ( this.isReadonly === true ) {
+            return false;
         }
+        this.internalPosition = {
+            latitude: this.position.latitude,
+            longitude: event.target.value,
+        };
+        this.$emit('onChangeCoord', this.internalPosition);
     }
 
     public onReset(event: any) {
