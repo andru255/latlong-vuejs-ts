@@ -1,4 +1,4 @@
 module.exports = {
-    outputDir: 'docs',
-    publicPath: '/latlong-vuejs-ts/'
+  outputDir: 'docs',
+  publicPath: '/latlong-vuejs-ts/'
 }

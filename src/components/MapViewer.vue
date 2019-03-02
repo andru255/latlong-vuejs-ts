@@ -11,13 +11,13 @@ declare const L: any;
 @Component
 export default class MapViewerComponent extends Vue {
 
-  private map: any;
-  private marker: any;
-  private token: string = 'pk.eyJ1IjoiYW5kcnUyNTUiLCJhIjoiY2pwdzR0ZGRiMHlvOTQ4bnR2OG9lbTNhNSJ9.isi3uGKrTkISJMlnS2T1bw';
-
   @Prop() private position!: CoordinateItem;
   @Prop() private zoom!: number;
   @Prop() private isMarkerDraggable: boolean =  true;
+
+  private map: any;
+  private marker: any;
+  private token: string = 'pk.eyJ1IjoiYW5kcnUyNTUiLCJhIjoiY2pwdzR0ZGRiMHlvOTQ4bnR2OG9lbTNhNSJ9.isi3uGKrTkISJMlnS2T1bw';
 
   public beforeMount() {
     const styleElement = document.createElement('link');

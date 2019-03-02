@@ -17,11 +17,12 @@ import MessageItem from './MessageItem.vue';
 
 @Component({
   components: {
-      MessageItem,
+    MessageItem,
   },
 })
 export default class MessageCenter extends Vue {
   @Prop() private message!: Message;
+
   private messages!: Message[];
   private index: number = 0;
 

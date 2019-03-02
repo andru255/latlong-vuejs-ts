@@ -43,8 +43,8 @@ export default class PositionSwitcherComponent extends Vue {
       navigator.geolocation.getCurrentPosition((position) => {
         const coords = position.coords;
         const coordinate: CoordinateItem =  {
-            latitude: coords.latitude,
-            longitude: coords.longitude,
+          latitude: coords.latitude,
+          longitude: coords.longitude,
         };
         this.$emit('onGetPositionByBrowser', coordinate);
       }, () => {
